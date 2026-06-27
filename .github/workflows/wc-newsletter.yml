@@ -12,7 +12,7 @@ jobs:
   send-newsletter:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # needed to commit updated bracket.html
+      contents: write
 
     steps:
       - name: Checkout repo
@@ -33,7 +33,6 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_WHATSAPP_FROM: ${{ secrets.TWILIO_WHATSAPP_FROM }}
           TWILIO_WHATSAPP_TO: ${{ secrets.TWILIO_WHATSAPP_TO }}
-          SPORTRADAR_API_KEY: ${{ secrets.SPORTRADAR_API_KEY }}
           BRACKET_URL: ${{ secrets.BRACKET_URL }}
         run: node src/newsletter.js
 
