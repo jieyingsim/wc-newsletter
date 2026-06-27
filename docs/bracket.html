@@ -1,1 +1,331 @@
-<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta name=viewport content=width=device-width,initial-scale=1><title>FIFA WC 2026</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;background:#0a0a1a;color:#f0f0f0;padding:1rem}h1{color:#ffd700;text-align:center;padding:2rem 0 .5rem;font-size:1.8rem}.upd{text-align:center;color:#4ade80;font-size:.8rem;margin-bottom:1rem}.wrap{max-width:900px;margin:0 auto}table{width:100%;border-collapse:collapse;background:#11112b;border-radius:12px;overflow:hidden}thead{background:#1e1e4a}th{padding:.6rem 1rem;text-align:left;font-size:.7rem;text-transform:uppercase;color:#888}td{padding:.6rem 1rem;border-top:1px solid #1e1e3a}.s{font-weight:700;color:#ffd700;text-align:center}.b{display:inline-block;padding:.15rem .4rem;border-radius:4px;font-size:.7rem;font-weight:700}.e{background:#1e3a1e;color:#4ade80}.l{background:#3a1e1e;color:#f87171}.u{background:#1e2a3a;color:#93c5fd}footer{text-align:center;padding:1.5rem;color:#444;font-size:.75rem}</style></head><body><div class=wrap><h1>🏆 FIFA World Cup 2026</h1><p class=upd>Updated: 28/06/2026, 1:48:43 am SGT</p><table><thead><tr><th>Home</th><th>Score</th><th>Away</th><th>Status</th><th>Winner</th></tr></thead><tbody><tr><td>Norway</td><td class=s>1 – 4</td><td>France</td><td><span class="b e">FT</span></td><td>France</td></tr><tr><td>Senegal</td><td class=s>5 – 0</td><td>Iraq</td><td><span class="b e">FT</span></td><td>Senegal</td></tr><tr><td>Cape Verde</td><td class=s>0 – 0</td><td>Saudi Arabia</td><td><span class="b e">FT</span></td><td>Draw</td></tr><tr><td>Uruguay</td><td class=s>0 – 1</td><td>Spain</td><td><span class="b e">FT</span></td><td>Spain</td></tr><tr><td>Egypt</td><td class=s>1 – 1</td><td>Iran</td><td><span class="b e">FT</span></td><td>Draw</td></tr><tr><td>New Zealand</td><td class=s>1 – 5</td><td>Belgium</td><td><span class="b e">FT</span></td><td>Belgium</td></tr><tr><td>Croatia</td><td class=s>0 – 0</td><td>Ghana</td><td><span class="b u">28/6/26, 5:00 am</span></td><td>-</td></tr><tr><td>Panama</td><td class=s>0 – 0</td><td>England</td><td><span class="b u">28/6/26, 5:00 am</span></td><td>-</td></tr><tr><td>Colombia</td><td class=s>0 – 0</td><td>Portugal</td><td><span class="b u">28/6/26, 7:30 am</span></td><td>-</td></tr><tr><td>Congo DR</td><td class=s>0 – 0</td><td>Uzbekistan</td><td><span class="b u">28/6/26, 7:30 am</span></td><td>-</td></tr><tr><td>Algeria</td><td class=s>0 – 0</td><td>Austria</td><td><span class="b u">28/6/26, 10:00 am</span></td><td>-</td></tr><tr><td>Jordan</td><td class=s>0 – 0</td><td>Argentina</td><td><span class="b u">28/6/26, 10:00 am</span></td><td>-</td></tr></tbody></table><footer>Auto-updated twice daily · Data: ESPN</footer></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIFA World Cup 2026 — Live Bracket</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a1a;
+      color: #f0f0f0;
+      padding: 1rem 1rem 3rem;
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    h1 { color: #ffd700; text-align: center; padding: 1.5rem 0 0.3rem; font-size: 1.8rem; }
+    .subtitle { text-align: center; color: #4ade80; font-size: 0.8rem; margin-bottom: 1.5rem; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #1e1e4a; }
+    .tab {
+      background: none; border: none; border-bottom: 3px solid transparent;
+      color: #888; padding: 0.6rem 1.5rem; cursor: pointer; font-size: 0.9rem;
+      margin-bottom: -2px; transition: color 0.2s;
+    }
+    .tab.active { color: #ffd700; border-bottom-color: #ffd700; }
+    .tab:hover { color: #ddd; }
+
+    /* Groups grid */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .group-card { background: #11112b; border-radius: 10px; overflow: hidden; }
+    .group-header {
+      background: #1a1a40; padding: 0.5rem 0.75rem;
+      font-size: 0.8rem; font-weight: 700; color: #ffd700;
+      letter-spacing: 0.05em;
+    }
+    .group-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .group-table th {
+      padding: 0.3rem 0.4rem; text-align: center;
+      color: #555; font-size: 0.68rem; font-weight: 600;
+    }
+    .group-table th.left { text-align: left; }
+    .group-table td { padding: 0.35rem 0.4rem; text-align: center; border-top: 1px solid #181830; }
+    .group-table td.left { text-align: left; white-space: nowrap; }
+    .row-adv  { background: rgba(74, 222, 128, 0.1); }
+    .row-bord { background: rgba(251, 191, 36, 0.06); }
+    .row-out  { opacity: 0.45; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+    .dot-green  { background: #4ade80; }
+    .dot-yellow { background: #fbbf24; }
+
+    /* Legend */
+    .legend {
+      display: flex; gap: 1.5rem; justify-content: center;
+      margin-top: 1.2rem; font-size: 0.75rem; color: #888;
+      flex-wrap: wrap;
+    }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+
+    /* Knockout */
+    .round-section { margin-bottom: 2rem; }
+    .round-title {
+      color: #ffd700; font-size: 1rem; font-weight: 700;
+      margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+      border-bottom: 1px solid #1e1e4a;
+    }
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 0.65rem;
+    }
+    .match-card {
+      background: #11112b; border-radius: 10px; padding: 0.7rem 0.9rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .team-name { flex: 1; font-size: 0.88rem; font-weight: 600; }
+    .team-name.home { text-align: right; }
+    .team-name.away { text-align: left; }
+    .team-name.winner { color: #4ade80; }
+    .score-block { min-width: 70px; text-align: center; }
+    .score-num { font-size: 1.05rem; font-weight: 700; color: #ffd700; display: block; }
+    .score-vs  { font-size: 0.75rem; color: #555; display: block; }
+    .badge {
+      display: inline-block; padding: 0.15rem 0.45rem;
+      border-radius: 4px; font-size: 0.68rem; font-weight: 700;
+    }
+    .b-ft   { background: #1e3a1e; color: #4ade80; }
+    .b-live { background: #3a1e1e; color: #f87171; animation: pulse 1s infinite; }
+    .b-date { background: #1a2035; color: #93c5fd; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
+    .none-msg { text-align: center; color: #555; padding: 3rem 1rem; font-size: 0.9rem; }
+    .err-msg  { text-align: center; color: #f87171; padding: 2rem; }
+    footer { text-align: center; padding: 2rem; color: #333; font-size: 0.72rem; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏆 FIFA World Cup 2026</h1>
+  <p class="subtitle" id="updated">Loading live data…</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('groups', this)">🗂 Group Stage</button>
+    <button class="tab" onclick="showTab('knockout', this)">🏆 Knockout Bracket</button>
+  </div>
+
+  <div id="tab-groups"><p class="none-msg">Fetching standings…</p></div>
+  <div id="tab-knockout" style="display:none"><p class="none-msg">Fetching knockout bracket…</p></div>
+</div>
+<footer>Data: ESPN Public API · Refreshes on every page load</footer>
+
+<script>
+  function showTab(name, btn) {
+    document.getElementById('tab-groups').style.display   = name === 'groups'   ? '' : 'none';
+    document.getElementById('tab-knockout').style.display = name === 'knockout' ? '' : 'none';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
+
+  async function fetchJson(url) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  }
+
+  function fmtSGT(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleString('en-SG', {
+      timeZone: 'Asia/Singapore',
+      month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    }) + ' SGT';
+  }
+
+  function advClass(color) {
+    if (!color) return '';
+    const c = color.toUpperCase();
+    if (c === '#81D6AC') return 'row-adv';
+    if (c === '#B5E7CE') return 'row-bord';
+    if (c === '#FF7F84') return 'row-out';
+    return '';
+  }
+
+  function advDot(color) {
+    if (!color) return '';
+    const c = color.toUpperCase();
+    if (c === '#81D6AC') return '<span class="dot dot-green" title="Advancing"></span>';
+    if (c === '#B5E7CE') return '<span class="dot dot-yellow" title="Possible 3rd"></span>';
+    return '';
+  }
+
+  // ── GROUPS ──────────────────────────────────────────────────────────────────
+  async function loadGroups() {
+    try {
+      const data = await fetchJson('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
+      const groups = data.children || [];
+
+      let html = '<div class="groups-grid">';
+      for (const g of groups) {
+        const entries = (g.standings?.entries || []).map(e => {
+          const st = Object.fromEntries((e.stats || []).map(s => [s.name, s.value ?? 0]));
+          return { team: e.team?.displayName || '?', color: e.note?.color || '', st };
+        });
+
+        // Sort: pts → GD → GF
+        entries.sort((a, b) =>
+          (b.st.points - a.st.points) ||
+          (b.st.pointDifferential - a.st.pointDifferential) ||
+          (b.st.pointsFor - a.st.pointsFor)
+        );
+
+        html += `<div class="group-card">
+          <div class="group-header">${g.name || g.abbreviation}</div>
+          <table class="group-table">
+            <thead><tr>
+              <th class="left">Team</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th>
+            </tr></thead><tbody>`;
+
+        for (const e of entries) {
+          const gd = e.st.pointDifferential;
+          html += `<tr class="${advClass(e.color)}">
+            <td class="left">${advDot(e.color)}${e.team}</td>
+            <td>${e.st.gamesPlayed|0}</td>
+            <td>${e.st.wins|0}</td>
+            <td>${e.st.ties|0}</td>
+            <td>${e.st.losses|0}</td>
+            <td>${gd > 0 ? '+' : ''}${gd|0}</td>
+            <td><strong>${e.st.points|0}</strong></td>
+          </tr>`;
+        }
+        html += '</tbody></table></div>';
+      }
+      html += '</div>';
+
+      html += `<div class="legend">
+        <span><span class="dot dot-green"></span> Advancing (Top 2)</span>
+        <span><span class="dot dot-yellow"></span> Borderline 3rd place</span>
+        <span style="opacity:.5">■ Eliminated</span>
+      </div>`;
+
+      document.getElementById('tab-groups').innerHTML = html;
+    } catch (err) {
+      document.getElementById('tab-groups').innerHTML =
+        `<p class="err-msg">⚠ Could not load standings: ${err.message}</p>`;
+    }
+  }
+
+  // ── KNOCKOUT ─────────────────────────────────────────────────────────────────
+  function getRound(dateStr) {
+    const d = new Date(dateStr);
+    const y = d.getUTCFullYear(), m = d.getUTCMonth(), day = d.getUTCDate();
+    if (y !== 2026) return null;
+    // June 29 - July 4  → R32
+    if ((m === 5 && day >= 29) || (m === 6 && day <= 4))  return { order: 1, name: '🔵 Round of 32' };
+    // July 5 - July 9   → R16
+    if (m === 6 && day >= 5 && day <= 9)                   return { order: 2, name: '🟢 Round of 16' };
+    // July 10 - July 13 → QF
+    if (m === 6 && day >= 10 && day <= 13)                 return { order: 3, name: '🟡 Quarter-Finals' };
+    // July 14 - July 17 → SF
+    if (m === 6 && day >= 14 && day <= 17)                 return { order: 4, name: '🟠 Semi-Finals' };
+    // July 18 - July 20 → Final / 3rd
+    if (m === 6 && day >= 18 && day <= 20)                 return { order: 5, name: '🏆 Final' };
+    return null;
+  }
+
+  async function loadKnockout() {
+    try {
+      // Generate dates: June 29 – July 20 2026
+      const dates = [];
+      const start = new Date('2026-06-29T00:00:00Z');
+      const end   = new Date('2026-07-20T00:00:00Z');
+      for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+        dates.push(d.toISOString().slice(0, 10).replace(/-/g, ''));
+      }
+
+      // Fetch all dates in parallel
+      const results = await Promise.all(
+        dates.map(dt =>
+          fetchJson(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dt}`)
+            .catch(() => ({ events: [] }))
+        )
+      );
+
+      // Deduplicate events by id, assign round
+      const seenIds = new Set();
+      const roundMap = {}; // roundName → events[]
+
+      for (const res of results) {
+        for (const ev of (res.events || [])) {
+          if (seenIds.has(ev.id)) continue;
+          seenIds.add(ev.id);
+          const round = getRound(ev.date);
+          if (!round) continue;
+          if (!roundMap[round.name]) roundMap[round.name] = { order: round.order, events: [] };
+          roundMap[round.name].events.push(ev);
+        }
+      }
+
+      const rounds = Object.entries(roundMap).sort((a, b) => a[1].order - b[1].order);
+
+      if (!rounds.length) {
+        document.getElementById('tab-knockout').innerHTML =
+          '<p class="none-msg">No knockout matches found yet — check back after the group stage ends.</p>';
+        return;
+      }
+
+      let html = '';
+      for (const [roundName, { events }] of rounds) {
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        html += `<div class="round-section">
+          <div class="round-title">${roundName} <span style="color:#555;font-size:.8rem;font-weight:400">(${events.length} matches)</span></div>
+          <div class="match-grid">`;
+
+        for (const ev of events) {
+          const comp  = ev.competitions?.[0] || {};
+          const comps = comp.competitors || [];
+          const home  = comps.find(c => c.homeAway === 'home') || comps[0] || {};
+          const away  = comps.find(c => c.homeAway === 'away') || comps[1] || {};
+          const state = comp.status?.type?.state || '';
+          const clock = comp.status?.displayClock || '';
+
+          const homeName = home.team?.displayName || home.displayName || '?';
+          const awayName = away.team?.displayName || away.displayName || '?';
+          const homeScore = home.score ?? '';
+          const awayScore = away.score ?? '';
+          const homeWin = home.winner === true;
+          const awayWin = away.winner === true;
+
+          let scoreHtml, badgeHtml;
+          if (state === 'post') {
+            scoreHtml = `<span class="score-num">${homeScore} – ${awayScore}</span>`;
+            badgeHtml = `<span class="badge b-ft">FT</span>`;
+          } else if (state === 'in') {
+            scoreHtml = `<span class="score-num">${homeScore} – ${awayScore}</span>`;
+            badgeHtml = `<span class="badge b-live">● LIVE ${clock}</span>`;
+          } else {
+            scoreHtml = `<span class="score-vs">vs</span>`;
+            badgeHtml = `<span class="badge b-date">${fmtSGT(ev.date)}</span>`;
+          }
+
+          html += `<div class="match-card">
+            <div class="team-name home ${homeWin ? 'winner' : ''}">${homeName}</div>
+            <div class="score-block">${scoreHtml}${badgeHtml}</div>
+            <div class="team-name away ${awayWin ? 'winner' : ''}">${awayName}</div>
+          </div>`;
+        }
+
+        html += '</div></div>';
+      }
+
+      document.getElementById('tab-knockout').innerHTML = html;
+    } catch (err) {
+      document.getElementById('tab-knockout').innerHTML =
+        `<p class="err-msg">⚠ Could not load bracket: ${err.message}</p>`;
+    }
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────────
+  (async () => {
+    const now = new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' });
+    document.getElementById('updated').textContent = `Live data · Loaded ${now} SGT`;
+    await Promise.all([loadGroups(), loadKnockout()]);
+  })();
+</script>
+</body>
+</html>
