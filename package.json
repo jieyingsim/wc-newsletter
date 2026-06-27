@@ -1,18 +1,16 @@
 {
   "name": "wc-newsletter",
   "version": "1.0.0",
-  "description": "FIFA World Cup 2026 daily WhatsApp newsletter with knockout bracket",
+  "description": "FIFA World Cup 2026 daily WhatsApp newsletter via GitHub Actions",
   "type": "module",
   "main": "src/newsletter.js",
   "scripts": {
-    "start": "node src/newsletter.js",
-    "test": "node src/newsletter.js"
+    "start": "node src/newsletter.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.30.0",
     "twilio": "^5.3.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20"
   }
 }
