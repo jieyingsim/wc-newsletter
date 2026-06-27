@@ -68,14 +68,14 @@ function buildMessage(matchData) {
     const finished = yesterday.filter((e) => e.competitions?.[0]?.status?.type?.completed);
     if (finished.length) {
       lines.push("📊 Yesterday's Results:");
-      finished.forEach((e) => lines.push("  " + fmtMatch(e)));
+      finished.forEach((e) => lines.push(" " + fmtMatch(e)));
     } else {
       lines.push("No results from yesterday.");
     }
     lines.push("");
     if (today.length) {
       lines.push("🗓 Today's Fixtures:");
-      today.forEach((e) => lines.push("  " + fmtMatch(e)));
+      today.forEach((e) => lines.push(" " + fmtMatch(e)));
     } else {
       lines.push("No matches today.");
     }
@@ -90,17 +90,17 @@ function buildMessage(matchData) {
     });
     if (live.length) {
       lines.push("🔴 Live Now:");
-      live.forEach((e) => lines.push("  " + fmtMatch(e)));
+      live.forEach((e) => lines.push(" " + fmtMatch(e)));
       lines.push("");
     }
     if (done.length) {
       lines.push("📊 Completed Today:");
-      done.forEach((e) => lines.push("  " + fmtMatch(e)));
+      done.forEach((e) => lines.push(" " + fmtMatch(e)));
       lines.push("");
     }
     if (upcoming.length) {
       lines.push("🗓 Still to Come:");
-      upcoming.forEach((e) => lines.push("  " + fmtMatch(e)));
+      upcoming.forEach((e) => lines.push(" " + fmtMatch(e)));
     }
     if (!done.length && !live.length && !upcoming.length) {
       lines.push("No matches scheduled today.");
@@ -112,24 +112,167 @@ function buildMessage(matchData) {
   return lines.join("\n");
 }
 
-// ── Bracket HTML ──────────────────────────────────────────────────────────────
-function generateBracketHtml(matchData) {
-  const now = new Date().toLocaleString("en-SG", { timeZone: "Asia/Singapore" });
-  const all = [...(matchData.yesterday ?? []), ...(matchData.today ?? [])];
-  const rows = all.map((e) => {
-    const c = e.competitions?.[0];
-    const home = c?.competitors?.find((x) => x.homeAway === "home");
-    const away = c?.competitors?.find((x) => x.homeAway === "away");
-    const done = c?.status?.type?.completed;
-    const live = c?.status?.type?.state === "in";
-    const hs = home?.score ?? "-", as_ = away?.score ?? "-";
-    const hn = home?.team?.displayName ?? "TBD", an = away?.team?.displayName ?? "TBD";
-    const time = e.date ? new Date(e.date).toLocaleString("en-SG", { timeZone: "Asia/Singapore", dateStyle: "short", timeStyle: "short" }) : "";
-    const badge = done ? '<span class="b e">FT</span>' : live ? '<span class="b l">LIVE</span>' : '<span class="b u">' + time + '</span>';
-    const winner = done ? (hs > as_ ? hn : as_ > hs ? an : "Draw") : "-";
-    return "<tr><td>" + hn + "</td><td class=s>" + hs + " – " + as_ + "</td><td>" + an + "</td><td>" + badge + "</td><td>" + winner + "</td></tr>";
-  }).join("");
-  return "<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta name=viewport content=width=device-width,initial-scale=1><title>FIFA WC 2026</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;background:#0a0a1a;color:#f0f0f0;padding:1rem}h1{color:#ffd700;text-align:center;padding:2rem 0 .5rem;font-size:1.8rem}.upd{text-align:center;color:#4ade80;font-size:.8rem;margin-bottom:1rem}.wrap{max-width:900px;margin:0 auto}table{width:100%;border-collapse:collapse;background:#11112b;border-radius:12px;overflow:hidden}thead{background:#1e1e4a}th{padding:.6rem 1rem;text-align:left;font-size:.7rem;text-transform:uppercase;color:#888}td{padding:.6rem 1rem;border-top:1px solid #1e1e3a}.s{font-weight:700;color:#ffd700;text-align:center}.b{display:inline-block;padding:.15rem .4rem;border-radius:4px;font-size:.7rem;font-weight:700}.e{background:#1e3a1e;color:#4ade80}.l{background:#3a1e1e;color:#f87171}.u{background:#1e2a3a;color:#93c5fd}footer{text-align:center;padding:1.5rem;color:#444;font-size:.75rem}</style></head><body><div class=wrap><h1>🏆 FIFA World Cup 2026</h1><p class=upd>Updated: " + now + " SGT</p>" + (rows ? "<table><thead><tr><th>Home</th><th>Score</th><th>Away</th><th>Status</th><th>Winner</th></tr></thead><tbody>" + rows + "</tbody></table>" : "<p style='text-align:center;padding:3rem;color:#555'>No data yet</p>") + "<footer>Auto-updated twice daily · Data: ESPN</footer></div></body></html>";
+// ── Bracket HTML (self-fetching live page) ────────────────────────────────────
+// Returns a standalone client-side page that fetches fresh ESPN data on every
+// page load — always current regardless of when the Action last ran.
+function generateBracketHtml() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIFA World Cup 2026 — Live Bracket</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a1a; color: #f0f0f0; padding: 1rem 1rem 3rem; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    h1 { color: #ffd700; text-align: center; padding: 1.5rem 0 0.3rem; font-size: 1.8rem; }
+    .subtitle { text-align: center; color: #4ade80; font-size: 0.8rem; margin-bottom: 1.5rem; }
+    .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #1e1e4a; }
+    .tab { background: none; border: none; border-bottom: 3px solid transparent; color: #888; padding: 0.6rem 1.5rem; cursor: pointer; font-size: 0.9rem; margin-bottom: -2px; }
+    .tab.active { color: #ffd700; border-bottom-color: #ffd700; }
+    .groups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .group-card { background: #11112b; border-radius: 10px; overflow: hidden; }
+    .group-header { background: #1a1a40; padding: 0.5rem 0.75rem; font-size: 0.8rem; font-weight: 700; color: #ffd700; }
+    .group-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .group-table th { padding: 0.3rem 0.4rem; text-align: center; color: #555; font-size: 0.68rem; }
+    .group-table th.left { text-align: left; }
+    .group-table td { padding: 0.35rem 0.4rem; text-align: center; border-top: 1px solid #181830; }
+    .group-table td.left { text-align: left; white-space: nowrap; }
+    .row-adv { background: rgba(74,222,128,0.1); }
+    .row-bord { background: rgba(251,191,36,0.06); }
+    .row-out { opacity: 0.45; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+    .dot-green { background: #4ade80; }
+    .dot-yellow { background: #fbbf24; }
+    .legend { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1.2rem; font-size: 0.75rem; color: #888; flex-wrap: wrap; }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+    .round-section { margin-bottom: 2rem; }
+    .round-title { color: #ffd700; font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid #1e1e4a; }
+    .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0.65rem; }
+    .match-card { background: #11112b; border-radius: 10px; padding: 0.7rem 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
+    .team-name { flex: 1; font-size: 0.88rem; font-weight: 600; }
+    .team-name.home { text-align: right; }
+    .team-name.away { text-align: left; }
+    .team-name.winner { color: #4ade80; }
+    .score-block { min-width: 70px; text-align: center; }
+    .score-num { font-size: 1.05rem; font-weight: 700; color: #ffd700; display: block; }
+    .score-vs { font-size: 0.75rem; color: #555; display: block; }
+    .badge { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.68rem; font-weight: 700; }
+    .b-ft { background: #1e3a1e; color: #4ade80; }
+    .b-live { background: #3a1e1e; color: #f87171; animation: pulse 1s infinite; }
+    .b-date { background: #1a2035; color: #93c5fd; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+    .none-msg { text-align: center; color: #555; padding: 3rem 1rem; font-size: 0.9rem; }
+    .err-msg { text-align: center; color: #f87171; padding: 2rem; }
+    footer { text-align: center; padding: 2rem; color: #333; font-size: 0.72rem; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏆 FIFA World Cup 2026</h1>
+  <p class="subtitle" id="updated">Loading live data…</p>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('groups',this)">🗂 Group Stage</button>
+    <button class="tab" onclick="showTab('knockout',this)">🏆 Knockout Bracket</button>
+  </div>
+  <div id="tab-groups"><p class="none-msg">Fetching standings…</p></div>
+  <div id="tab-knockout" style="display:none"><p class="none-msg">Fetching knockout bracket…</p></div>
+</div>
+<footer>Data: ESPN Public API · Refreshes on every page load</footer>
+<script>
+  function showTab(name,btn){
+    document.getElementById('tab-groups').style.display=name==='groups'?'':'none';
+    document.getElementById('tab-knockout').style.display=name==='knockout'?'':'none';
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    if(btn)btn.classList.add('active');
+  }
+  async function fetchJson(url){const r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+  function fmtSGT(s){return new Date(s).toLocaleString('en-SG',{timeZone:'Asia/Singapore',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' SGT';}
+  function advClass(c){if(!c)return '';c=c.toUpperCase();if(c==='#81D6AC')return 'row-adv';if(c==='#B5E7CE')return 'row-bord';if(c==='#FF7F84')return 'row-out';return '';}
+  function advDot(c){if(!c)return '';c=c.toUpperCase();if(c==='#81D6AC')return '<span class="dot dot-green"></span>';if(c==='#B5E7CE')return '<span class="dot dot-yellow"></span>';return '';}
+  async function loadGroups(){
+    try{
+      const data=await fetchJson('https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings');
+      const groups=data.children||[];
+      let html='<div class="groups-grid">';
+      for(const g of groups){
+        const entries=(g.standings?.entries||[]).map(e=>{
+          const st=Object.fromEntries((e.stats||[]).map(s=>[s.name,s.value??0]));
+          return{team:e.team?.displayName||'?',color:e.note?.color||'',st};
+        });
+        entries.sort((a,b)=>(b.st.points-a.st.points)||(b.st.pointDifferential-a.st.pointDifferential)||(b.st.pointsFor-a.st.pointsFor));
+        html+='<div class="group-card"><div class="group-header">'+(g.name||g.abbreviation)+'</div>';
+        html+='<table class="group-table"><thead><tr><th class="left">Team</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>';
+        for(const e of entries){
+          const gd=e.st.pointDifferential;
+          html+='<tr class="'+advClass(e.color)+'"><td class="left">'+advDot(e.color)+e.team+'</td>';
+          html+='<td>'+(e.st.gamesPlayed|0)+'</td><td>'+(e.st.wins|0)+'</td><td>'+(e.st.ties|0)+'</td><td>'+(e.st.losses|0)+'</td>';
+          html+='<td>'+(gd>0?'+':'')+(gd|0)+'</td><td><strong>'+(e.st.points|0)+'</strong></td></tr>';
+        }
+        html+='</tbody></table></div>';
+      }
+      html+='</div><div class="legend"><span><span class="dot dot-green"></span>Advancing (Top 2)</span><span><span class="dot dot-yellow"></span>Borderline 3rd</span><span style="opacity:.5">■ Eliminated</span></div>';
+      document.getElementById('tab-groups').innerHTML=html;
+    }catch(err){document.getElementById('tab-groups').innerHTML='<p class="err-msg">⚠ '+err.message+'</p>';}
+  }
+  function getRound(s){
+    const d=new Date(s),y=d.getUTCFullYear(),m=d.getUTCMonth(),day=d.getUTCDate();
+    if(y!==2026)return null;
+    if((m===5&&day>=29)||(m===6&&day<=4))return{order:1,name:'🔵 Round of 32'};
+    if(m===6&&day>=5&&day<=9)return{order:2,name:'🟢 Round of 16'};
+    if(m===6&&day>=10&&day<=13)return{order:3,name:'🟡 Quarter-Finals'};
+    if(m===6&&day>=14&&day<=17)return{order:4,name:'🟠 Semi-Finals'};
+    if(m===6&&day>=18&&day<=20)return{order:5,name:'🏆 Final'};
+    return null;
+  }
+  async function loadKnockout(){
+    try{
+      const dates=[];
+      for(let d=new Date('2026-06-29T00:00:00Z');d<=new Date('2026-07-20T00:00:00Z');d.setUTCDate(d.getUTCDate()+1))
+        dates.push(d.toISOString().slice(0,10).replace(/-/g,''));
+      const results=await Promise.all(dates.map(dt=>fetchJson('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates='+dt).catch(()=>({events:[]}))));
+      const seen=new Set(),roundMap={};
+      for(const res of results)for(const ev of(res.events||[])){
+        if(seen.has(ev.id))continue;seen.add(ev.id);
+        const round=getRound(ev.date);if(!round)continue;
+        if(!roundMap[round.name])roundMap[round.name]={order:round.order,events:[]};
+        roundMap[round.name].events.push(ev);
+      }
+      const rounds=Object.entries(roundMap).sort((a,b)=>a[1].order-b[1].order);
+      if(!rounds.length){document.getElementById('tab-knockout').innerHTML='<p class="none-msg">No knockout matches yet — check back after group stage.</p>';return;}
+      let html='';
+      for(const[roundName,{events}]of rounds){
+        events.sort((a,b)=>new Date(a.date)-new Date(b.date));
+        html+='<div class="round-section"><div class="round-title">'+roundName+' <span style="color:#555;font-size:.8rem;font-weight:400">('+events.length+' matches)</span></div><div class="match-grid">';
+        for(const ev of events){
+          const comp=ev.competitions?.[0]||{},comps=comp.competitors||[];
+          const home=comps.find(c=>c.homeAway==='home')||comps[0]||{};
+          const away=comps.find(c=>c.homeAway==='away')||comps[1]||{};
+          const state=comp.status?.type?.state||'',clock=comp.status?.displayClock||'';
+          const hn=home.team?.displayName||home.displayName||'?';
+          const an=away.team?.displayName||away.displayName||'?';
+          const hs=home.score??'',as_=away.score??'';
+          const hw=home.winner===true,aw=away.winner===true;
+          let sc,bg;
+          if(state==='post'){sc='<span class="score-num">'+hs+' – '+as_+'</span>';bg='<span class="badge b-ft">FT</span>';}
+          else if(state==='in'){sc='<span class="score-num">'+hs+' – '+as_+'</span>';bg='<span class="badge b-live">● LIVE '+clock+'</span>';}
+          else{sc='<span class="score-vs">vs</span>';bg='<span class="badge b-date">'+fmtSGT(ev.date)+'</span>';}
+          html+='<div class="match-card"><div class="team-name home'+(hw?' winner':'')+'">'+ hn+'</div><div class="score-block">'+sc+bg+'</div><div class="team-name away'+(aw?' winner':'')+'">'+ an+'</div></div>';
+        }
+        html+='</div></div>';
+      }
+      document.getElementById('tab-knockout').innerHTML=html;
+    }catch(err){document.getElementById('tab-knockout').innerHTML='<p class="err-msg">⚠ '+err.message+'</p>';}
+  }
+  (async()=>{
+    const now=new Date().toLocaleString('en-SG',{timeZone:'Asia/Singapore'});
+    document.getElementById('updated').textContent='Live data · Loaded '+now+' SGT';
+    await Promise.all([loadGroups(),loadKnockout()]);
+  })();
+<\/script>
+</body>
+</html>`;
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -138,7 +281,7 @@ async function main() {
   const matchData = await fetchMatchData();
   console.log("Today:", matchData.today.length, "Yesterday:", matchData.yesterday.length);
 
-  const html = generateBracketHtml(matchData);
+  const html = generateBracketHtml();
   const bp = path.join(__dirname, "..", "docs", "bracket.html");
   fs.mkdirSync(path.dirname(bp), { recursive: true });
   fs.writeFileSync(bp, html, "utf8");
